@@ -10,6 +10,7 @@ import {
   Col,
   Button,
   Popconfirm,
+  Tooltip,
 } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useMutation, useQuery, useReactiveVar } from "@apollo/client";
@@ -89,9 +90,11 @@ const CategoriesPage = (props: Props) => {
             </Button>
           </Popconfirm>
         ) : (
-          <Button loading={deleteCategoryLoading} type="text" disabled={true}>
-            <DeleteTwoTone twoToneColor="#ccc" />
-          </Button>
+          <Tooltip title="sorry this category made by another one">
+            <Button loading={deleteCategoryLoading} type="text" disabled={true}>
+              <DeleteTwoTone twoToneColor="#ccc" />
+            </Button>
+          </Tooltip>
         ),
     },
   ];

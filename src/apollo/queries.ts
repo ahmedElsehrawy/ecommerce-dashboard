@@ -64,7 +64,7 @@ export const PRODUCTS = gql`
         vendorId
         price
         discountId
-        inventory {
+        Inventory {
           id
           quantity
           size

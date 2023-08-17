@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import {
   Typography,
@@ -11,7 +11,7 @@ import {
 } from "antd";
 import type { UploadFile } from "antd/es/upload/interface";
 
-import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
+import { useLazyQuery, useMutation } from "@apollo/client";
 import { CATEGORIES, CREATE_PRODUCT } from "../../../apollo/queries";
 import CustomCard from "../../../components/common/CustomCard";
 import CustomButton from "../../../components/common/CustomButton";
@@ -29,7 +29,7 @@ type Props = {};
 
 const AddProduct = (props: Props) => {
   const [mainImage, setMainImage] = useState<any>(null);
-  const [subImages, setSubImages] = useState<any>(null);
+  const [subImages, setSubImages] = useState<any>([]);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [previewTitle, setPreviewTitle] = useState("");
@@ -54,16 +54,17 @@ const AddProduct = (props: Props) => {
     setUploadLoading(true);
     let uploadedMainImage = await uploadImage(mainImage);
 
-    let optimizedImages: any;
+    let optimizedImages: any = [];
 
-    await Promise.all(subImages.map((img: any) => uploadImage(img))).then(
-      (results) => {
-        optimizedImages = results.map((result) => ({
-          url: result.secure_url,
-        }));
-      }
-    );
-
+    if (subImages.length > 0) {
+      await Promise.all(subImages.map((img: any) => uploadImage(img))).then(
+        (results) => {
+          optimizedImages = results.map((result) => ({
+            url: result.secure_url,
+          }));
+        }
+      );
+    }
     createProduct({
       variables: {
         input: {
@@ -77,6 +78,9 @@ const AddProduct = (props: Props) => {
         console.log("🚀 ~ file: index.tsx ~ line 82 ~ onFinish ~ data", data);
         setUploadLoading(false);
         navigate(`/products/${data.createProduct.id}`);
+      },
+      onError: (error) => {
+        console.log("🚀 ~ file: index.tsx:85 ~ onFinish ~ error:", error);
       },
     });
   };
